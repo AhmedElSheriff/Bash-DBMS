@@ -83,10 +83,10 @@ function Create_table() {
     done
 
     printf -v joined '%s:' "${cols[@]}"
-    echo "${joined%:}" >> $table_name
+    echo "${joined%:}" >> .$table_name
 
     printf -v joined '%s:' "${types[@]}"
-    echo "${joined%:}" >> $table_name
+    echo "${joined%:}" >> .$table_name
 }
 
 function List_tables (){
