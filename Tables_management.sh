@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DB=databases
+DB=databases/$db_name
 
 function Create_table() {
     
