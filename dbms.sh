@@ -156,6 +156,8 @@ do
             fi
             
             echo -e "\n${GREEN}Connected Successfully${NC}\n"
+
+            ./flow.sh
         break
         ;;
         4) 
