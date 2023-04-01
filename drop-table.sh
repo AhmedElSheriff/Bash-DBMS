@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DB=database
+DB=databases
 cd $DB
 
 read -p "Enter your table name: " table_name
