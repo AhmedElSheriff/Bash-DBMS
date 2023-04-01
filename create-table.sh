@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DB=database
+DB=databases
 
 echo " \"Spaces should be avoided and replace with _\" "
 read -p "Enter your table name: " table_name

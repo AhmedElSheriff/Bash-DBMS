@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DB=database
+DB=databases
 cd $DB
 
 select choice in "List all tables" "Show content of spacific table" exit
