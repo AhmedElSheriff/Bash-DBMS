@@ -157,7 +157,7 @@ do
             
             echo -e "\n${GREEN}Connected Successfully${NC}\n"
 
-            ./flow.sh
+            ./Tables_management.sh
         break
         ;;
         4) 
