@@ -1,46 +1,6 @@
 #! /usr/bin/bash
 
-shopt -s extglob
-PS3="Type in your option number: "
-DB_PATH="databases"
-YELLOW='\033[1;33m'   
-NC='\033[0m'
-RED='\033[1;31m'
-GREEN='\033[1;32m'
-
-function validate_dbname() {
-    if [[ $*  =~ ^[0-9] ]]
-    then
-        echo DB name must NOT start with a number
-        exit 1
-    fi
-
-    if [[ $*  =~ ^_ || $* =~ _$ ]]
-    then
-        echo DB name must NOT start or end with underscore
-        exit 1
-    fi
-
-    if [[ $* == *['!|<>{}][]"-'@#\$%^\&*()+.\`]*  ]]
-    then
-        echo DB name must NOT include special characters
-        exit 1
-    fi
-}
-
-function validate_db_username() {
-    if [[ $*  =~ ^[0-9] ]]
-    then
-        echo DB username must NOT start with a number
-        exit 1
-    fi
-
-    if [[ $* == *[' !|<>{}][]"-'@#\$%^\&*()+.\`]*  ]]
-    then
-        echo DB username must NOT include spaces or special characters
-        exit 1
-    fi
-}
+source ./util.sh
 
 function authorize() {
     if [ ! -d "$DB_PATH/$1" ]
@@ -95,7 +55,7 @@ do
             if [ $? -eq 1 ]
             then
                 # Returns Error
-                echo -e "\n${RED}>>>${YELLOW}$result${RED}<<<${NC}\n"
+                echo -e "\n${RED}>>>${YELLOW}DB name $result${RED}<<<${NC}\n"
                 break
             fi
 
@@ -151,7 +111,7 @@ do
             if [ $? -eq 1 ]
             then
                 # Returns Error
-                echo -e "\n${RED}>>>${YELLOW}$result${RED}<<<${NC}\n"
+                echo -e "\n${RED}>>>${YELLOW}DB name $result${RED}<<<${NC}\n"
                 break
             fi
             
@@ -172,7 +132,7 @@ do
             if [ $? -eq 1 ]
             then
                 # Returns Error
-                echo -e "\n${RED}>>>${YELLOW}$result${RED}<<<${NC}\n"
+                echo -e "\n${RED}>>>${YELLOW}DB name $result${RED}<<<${NC}\n"
                 break
             fi
 
