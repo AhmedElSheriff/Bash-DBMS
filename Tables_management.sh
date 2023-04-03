@@ -156,6 +156,8 @@ do
                     echo -e "\n${RED}>>>${YELLOW}Table name $result${RED}<<<${NC}\n"
                     break
                 fi
+
+                
             ;;
 
             "List tables")
