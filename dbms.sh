@@ -9,13 +9,13 @@ function authorize() {
         exit 1
     fi
 
-    if [[ $2 != `cut -d : "$DB_PATH/$1/auth" -f 1` ]]
+    if [[ $2 != `cut -d : "$DB_PATH/$1/.auth" -f 1` ]]
     then
         echo "The username you have entered is NOT correct"
         exit 1
     fi
 
-    if [[ `sha1sum <<< $3 | cut -d ' ' -f 1` != `cut -d : "$DB_PATH/$1/auth" -f 2` ]]
+    if [[ `sha1sum <<< $3 | cut -d ' ' -f 1` != `cut -d : "$DB_PATH/$1/.auth" -f 2` ]]
     then
         echo "The password you have entered is NOT correct"
         exit 1
@@ -33,7 +33,7 @@ function create_db() {
 
     db_password=`echo $3 | sha1sum | cut -d ' ' -f 1`
     mkdir "$DB_PATH/$1"
-    echo "$2:$db_password" > "$DB_PATH/$1/auth"
+    echo "$2:$db_password" > "$DB_PATH/$1/.auth"
 }
 
 
@@ -51,29 +51,29 @@ do
             echo "Type in the DB admin password:"
             read -s db_password
 
-            result=`validate_dbname $db_name`
+            error=`validate_name $db_name`
             if [ $? -eq 1 ]
             then
                 # Returns Error
-                echo -e "\n${RED}>>>${YELLOW}DB name $result${RED}<<<${NC}\n"
-                break
+                echo -e "\n${RED}>>>${YELLOW}DB name $error${RED}<<<${NC}\n"
+                continue
             fi
 
             db_name=`echo "${db_name// /_}" | tr 'A-Z' 'a-z'`
 
-            result=`validate_db_username $db_username`
+            error=`validate_db_username $db_username`
             if [ $? -eq 1 ]
             then
                 # Returns Error
-                echo -e "\n${RED}>>>${YELLOW}$result${RED}<<<${NC}\n"
+                echo -e "\n${RED}>>>${YELLOW}$error${RED}<<<${NC}\n"
                 break
             fi
 
-            result=`create_db $db_name $db_username $db_password`
+            error=`create_db $db_name $db_username $db_password`
             if [ $? -eq 1 ]
             then
                 # Returns Error
-                echo -e "\n${RED}>>>${YELLOW}$result${RED}<<<${NC}\n"
+                echo -e "\n${RED}>>>${YELLOW}$error${RED}<<<${NC}\n"
                 break
             fi
 
@@ -93,7 +93,7 @@ do
             
             for database in $databases
             do
-                count=`find $DB_PATH/$database -type f ! -name auth | wc -l`
+                count=`find $DB_PATH/$database -type f ! -name ^. | wc -l`
                 printf "%10s %s\n" $database "| $count"
             done
             echo -e "\n"
@@ -106,18 +106,18 @@ do
             echo "Type in the DB admin password:"
             read -s db_password
 
-            result=`authorize $db_name $db_username $db_password`
+            error=`authorize $db_name $db_username $db_password`
             
             if [ $? -eq 1 ]
             then
                 # Returns Error
-                echo -e "\n${RED}>>>${YELLOW}DB name $result${RED}<<<${NC}\n"
+                echo -e "\n${RED}>>>${YELLOW}DB name $error${RED}<<<${NC}\n"
                 break
             fi
-            
+             
             echo -e "\n${GREEN}Connected Successfully${NC}\n"
 
-            ./Tables_management.sh
+            ./Tables_management.sh $db_name
         break
         ;;
         4) 
@@ -127,12 +127,12 @@ do
             echo "Type in the DB admin password:"
             read -s db_password
 
-            result=`authorize $db_name $db_username $db_password`
+            error=`authorize $db_name $db_username $db_password`
 
             if [ $? -eq 1 ]
             then
                 # Returns Error
-                echo -e "\n${RED}>>>${YELLOW}DB name $result${RED}<<<${NC}\n"
+                echo -e "\n${RED}>>>${YELLOW}DB name $error${RED}<<<${NC}\n"
                 break
             fi
 
