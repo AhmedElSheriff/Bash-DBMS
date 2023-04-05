@@ -41,7 +41,7 @@ do
                     if [[ $? == 1 ]]
 
                     then
-                        echo -e ""\n${GREEN}[Ctrl+D] is captured${NC}\n"
+                        echo -e "\n${GREEN}[Ctrl+D] is captured${NC}\n"
                         break
                     fi
                     
