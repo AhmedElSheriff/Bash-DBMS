@@ -164,6 +164,14 @@ do
 
                 break
             ;;
+            "Select From Table")
+                ./select.sh $DB
+                break
+            ;;
+            "Update Table")
+                ./update.sh $DB
+                break
+            ;;
             "Back")
                 exit
             ;;

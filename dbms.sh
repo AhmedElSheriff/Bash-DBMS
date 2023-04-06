@@ -32,7 +32,7 @@ function create_db() {
     fi
 
     db_password=`echo $3 | sha1sum | cut -d ' ' -f 1`
-    mkdir "$DB_PATH/$1"
+    mkdir -p "$DB_PATH/$1"
     echo "$2:$db_password" > "$DB_PATH/$1/.auth"
 }
 

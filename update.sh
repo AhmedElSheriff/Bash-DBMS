@@ -2,14 +2,25 @@
 
 source ./util.sh
 
-DB=./databases/DD
-SCHEMA=./databases/EE
+
+
+read -p "Enter your table name: " table_name
+error=`validate_name $table_name`
+if [ $? -eq 1 ]
+then
+    # Returns Error
+    echo -e "\n${RED}>>>${YELLOW}Table name $error${RED}<<<${NC}\n"
+    break
+fi
+
+DB=$1/$table_name
+SCHEMA=$1/.$table_name
 primary_key_column=`tail -n 1 $SCHEMA`
 #echo $primary_key_column
 
 while [ true ]
 do
-    select choice in update_column exit
+    select choice in update_column back
     do
         case $choice in 
             update_column)
@@ -94,7 +105,7 @@ do
                     $DB > ./databases/tmp && rm $DB && mv ./databases/tmp $DB
                 done
             ;;
-            exit)
+            back)
                 exit
             ;;
         esac
