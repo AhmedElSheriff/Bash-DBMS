@@ -58,23 +58,16 @@ function validate_db_username() {
 function validate_table_data() {
     case $1 in
         int)
-            if ! [[ $2 =~ ^[0-9]+$ ]]
+            if ! [[ $2 =~ ^[+-]?[0-9]+$ ]]
             then
                 echo "Input must be a valid number"
                 return 1
             fi
         ;;
         float)
-            if ! [[ $2 =~ ^[0-9]*\.[0-9]+$ ]]
-            then
+            if ! [[ $2 =~ ^[+-]?[0-9]*\.[0-9]+$ ]]
+            then 
                 echo "Input must be a valid float number"
-                return 1
-            fi
-        ;;
-        string)
-            if [[ $2 =~ *['!|<>{}][]"-'#\$%^\&*()+\`]*  ]]
-            then
-                echo "Input contains forbidden characters"
                 return 1
             fi
         ;;
