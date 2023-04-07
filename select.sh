@@ -1,6 +1,13 @@
 #!/bin/bash
 
 source ./util.sh
+
+if [[ !$1 ]]
+then
+    echo -e "\n${YELLOW}Please run the program from ${RED}dbms.sh ${YELLOW}file\n${NC}"
+    exit
+fi
+
 DB=$1
 
 read -p "Enter your table name: " table_name
