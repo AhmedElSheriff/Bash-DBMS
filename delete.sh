@@ -2,7 +2,7 @@
 
 source ./util.sh
 
-if [[ !$1 ]]
+if [[ ! $1 ]]
 then
     echo -e "\n${YELLOW}Please run the program from ${RED}dbms.sh ${YELLOW}file\n${NC}"
     exit

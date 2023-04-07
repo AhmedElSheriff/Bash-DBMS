@@ -2,7 +2,7 @@
 
 source ./util.sh
 
-if [[ !$1 ]]
+if [[ ! $1 ]]
 then
     echo -e "\n${YELLOW}Please run the program from ${RED}dbms.sh ${YELLOW}file\n${NC}"
     exit
@@ -17,6 +17,13 @@ if [ $? -eq 1 ]
 then
     # Returns Error
     echo -e "\n${RED}>>>${YELLOW}Table name $error${RED}<<<${NC}\n"
+    exit
+fi
+
+if [ ! -f $DB/$table_name ]
+then
+    # Returns Error
+    echo -e "\n${RED}Table does NOT exist${NC}\n"
     exit
 fi
 
