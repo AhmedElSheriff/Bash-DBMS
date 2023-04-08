@@ -46,41 +46,41 @@ do
                 echo -e "\nEnter the value of ${YELLOW}the primary key ($column_name)${NC} that its type is ${YELLOW}($type)${NC}"
                 read primary_key
 
+                #row=0
                 row=`awk -v primary_key=$primary_key -v primary_key_column=$primary_key_column 'BEGIN { FS=":" } \
                 $primary_key_column == primary_key { print NR ;exit} ' $DB`
                 #echo $row
-                
-                #Check if the primay key is exist or not
                 if [[ ! $row ]]
                 then
                     echo -e "\n${RED}This primary key is not exist${NC}\n"
-                    break
+                    exit
                 fi
 
                 while [ true ]
                 do
                     read -p "Enter the numbers of columns you need to update seperated by comma (,): " colms
                     num_of_columns=`head -n 2 $SCHEMA | tail -n 1 | tr ":" " " | wc -w`
-                    cols_formatted=${colms//,/ }
-
+                    
                     if [[ ! $colms =~ ^[0-9]+[,0-9]*$ ]]
                     then
                         echo -e "\n${RED}The value must be column numbers seperated by comma${NC}\n"
+                        echo no
                         continue
+                    else 
+                        echo yes 
+                        cols_formatted=${colms//,/ }
+                        for val in $cols_formatted
+                        do
+                            if [[ $val > $num_of_columns || $val < 0 ]]
+                            then
+                                echo -e "\n${RED}your columns values should be between 0 and $num_of_columns${NC}\n"
+                                break 2
+                            fi
+                        done
+                        break
                     fi
-                    break
                 done
                 
-                for val in $cols_formatted
-                do
-                    if (( $val > $num_of_columns ))
-                    then
-                        echo -e "\n${RED}your columns values should be between 0 and $num_of_columns${NC}\n"
-                        #break from for loop                                
-                        break 2
-                    fi
-                done
-
                 for col in $cols_formatted
                 do  
                     while [ true ]
@@ -104,7 +104,7 @@ do
                             if [[ `awk -v column_value=$column_value -v primary_key_column=$primary_key_column 'BEGIN { FS=":" } column_value == $primary_key_column { print "1"}' $DB` ]]
                             then
                                 echo -e "\n${RED}primary key must be uniqe this value is already exist${NC}\n"
-                                continue
+                                exit
                             fi
                         fi
 
