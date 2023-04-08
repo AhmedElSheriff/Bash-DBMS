@@ -27,7 +27,7 @@ function validate_name() {
         return 1
     fi
 
-    if [[ $* == *['!|<>{}][]"-'@#\$%^\&*()+.\`]*  ]]
+    if [[ $* == *['ٌُ÷×…;،:,/!|<>{}][]"-'@#\$%^\&*()+.\`]*  ]]
     then
         echo must NOT include special characters
         return 1
@@ -38,7 +38,7 @@ function validate_db_username() {
 
     if [[ ! $* ]]
     then
-        echo DB name must NOT be null
+        echo DB username must NOT be null
         return 1
     fi
 
@@ -48,7 +48,7 @@ function validate_db_username() {
         return 1
     fi
 
-    if [[ $* == *[' !|<>{}][]"-'@#\$%^\&*()+.\`]*  ]]
+    if [[ $* == *['ُ ٌ÷…،×:;,/!|<>{}][]"-'@#\$%^\&*()+.\`]*  ]]
     then
         echo DB username must NOT include spaces or special characters
         return 1
@@ -68,6 +68,14 @@ function validate_table_data() {
             if ! [[ $2 =~ ^[+-]?[0-9]*\.[0-9]+$ ]]
             then 
                 echo "Input must be a valid float number"
+                return 1
+            fi
+        ;;
+
+        string)
+            if [[ $2 == *[:]*  ]]
+            then
+                echo Value must NOT include column seperator
                 return 1
             fi
         ;;

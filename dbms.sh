@@ -56,7 +56,7 @@ do
             then
                 # Returns Error
                 echo -e "\n${RED}>>>${YELLOW}DB name $error${RED}<<<${NC}\n"
-                continue
+                break
             fi
 
             db_name=`echo "${db_name// /_}" | tr 'A-Z' 'a-z'`
@@ -93,7 +93,7 @@ do
             
             for database in $databases
             do
-                count=`find $DB_PATH/$database -type f ! -name ^. | wc -l`
+                count=`find $DB_PATH/$database -type f ! -name '.*' | wc -l`
                 printf "%10s %s\n" $database "| $count"
             done
             echo -e "\n"

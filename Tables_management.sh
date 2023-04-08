@@ -2,13 +2,13 @@
 
 source ./util.sh
 
-if [[ !$1 ]]
+if [[ ! $1 ]]
 then
     echo -e "\n${YELLOW}Please run the program from ${RED}dbms.sh ${YELLOW}file\n${NC}"
     exit
 fi
 
-DB=databases/$1/
+DB=databases/$1
 
 while [ true ]
 do
@@ -93,11 +93,12 @@ do
 
                     if [[ ! $primary_key ]]
                     then
-                        read -p "Do you want this coulmn to be the primary key? (y/n) " primary_key
+                        read -p "Do you want this coulmn to be the primary key? (y/n) " is_primary_key
 
-                        if [[ `tr ['A-Z'] ['a-z'] <<< $primary_key` == "y" ]]
+                        if [[ `tr ['A-Z'] ['a-z'] <<< $is_primary_key` == "y" ]]
                         then
                             primary_key=$index
+                            echo ${primary_key} >> databases/$1/.$table_name
                         fi
                     fi
 
@@ -109,7 +110,11 @@ do
                 printf -v joined '%s:' "${types[@]}"
                 echo "${joined%:}" >> databases/$1/.$table_name
                 
-                echo ${primary_key} >> databases/$1/.$table_name
+                if [[ ! $primary_key ]]
+                then
+                    echo 1 >> databases/$1/.$table_name
+                    echo -e "\n${YELLOW}The primary key is set to the first column${NC}\n"
+                fi
 
                 touch databases/$1/$table_name
                 break
@@ -123,17 +128,33 @@ do
                         case $choice in
 
                             "List all tables") 
-                                ls -1 databases/$1/
+                                echo -e "\n"
+                                tables=`ls databases/$1`
+                                if [[ $tables ]]
+                                then
+                                    printf "%10s %s\n" "Table Name" "| Rows Count" "---------------------------"
+                                else
+                                    echo -e "\n${RED}>>>${YELLOW}You currently don NOT have any tables available${RED}<<<${NC}\n"
+                                fi
+
+                                for table in $tables
+                                do
+                                    count=`cat databases/$1/$table | wc -l`
+                                    printf "%10s %s\n" $table "| $count"
+                                done
+                                echo -e "\n"
                                 break
                             ;;
                             "Show content of spacific table")
                                 read -p "Enter your table name: " table_name
                                 if [[ -f "databases/$1/$table_name" ]]
                                 then
+                                    echo -e "\n"
                                     cat databases/$1/$table_name
                                 else
                                     echo -e "\n${YELLOW}Table is not exist${NC}\n"
                                 fi
+                                echo -e "\n"
                             break
                             ;;
                             "Back") 
@@ -153,6 +174,13 @@ do
                 elif [[ -f "databases/$1/$table_name" ]]
                     then
                         rm -i databases/$1/$table_name
+
+                        if [[ ! -f databases/$1/$table_name ]]
+                        then
+                            rm databases/$1/.$table_name
+
+                            echo -e "\n${GREEN}Table Deleted Successfuly${NC}\n"
+                        fi
                 else
                         echo -e "\n${YELLOW}Table does NOT exist${NC}\n"
                 fi	

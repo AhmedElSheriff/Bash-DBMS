@@ -29,32 +29,32 @@ fi
 
 while [ true ]
 do
-    select choice in select-all-table select-spacific-columns select-spacific-row back
+    select choice in "Select all table rows" "Select specific columns" "Select specific row" "Back"
     do
         case $choice in 
-            select-all-table)
+            "Select all table rows")
                 cat $DB/$table_name
                 echo -e "\n"
                 break
             ;;
-            select-spacific-columns)
+            "Select specific columns")
                 read -p "Enter the index of columns you need to select seperated by comma (,): " colms
-                printf -v joined '%s,' "${arr[@]}"
-                elements="${joined%,}"
+                # printf -v joined '%s,' "${arr[@]}"
+                # elements="${joined%,}"
                 cat $DB/$table_name | cut -d: -f$colms
                 echo -e "\n"
                 break
             ;;
-            select-spacific-row)
-                read -p "Enter your prinmary key to the row you need to select: " key
+            "Select specific row")
+                read -p "Enter your primary key to the row you need to select: " key
                 if ! grep -q ^$key "$DB/$table_name" 
                     then
                         echo -e "\n${RED}This primary key is not exist${NC}\n"
                     else
-                        awk -F: -v key=$key -v z=$z '{if ($1==key) {print $0}}' $DB/$table_name
+                        awk -F: -v key=$key -v z=$z '{if (($1==key)) {print $0}}' $DB/$table_name
                 fi
             ;;
-            back)
+            "Back")
                 exit
             ;;
         esac

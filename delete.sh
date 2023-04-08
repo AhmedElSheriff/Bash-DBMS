@@ -18,7 +18,7 @@ then
     exit
 fi
 
-primary_key=`tail -n 1 $DB/.$table_name`
+primary_key=`head -n 3 $DB/.$table_name | tail -n 1`
 cols=`head -n 1 $DB/.$table_name`
 cols_formatted=(${cols//:/ })
 

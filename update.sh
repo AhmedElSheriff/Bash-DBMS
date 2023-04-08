@@ -28,7 +28,8 @@ then
 fi
 
 SCHEMA=$1/.$table_name
-primary_key_column=`tail -n 1 $SCHEMA`
+primary_key_column=`head -n 3 $SCHEMA | tail -n 1`
+
 #echo $primary_key_column
 
 

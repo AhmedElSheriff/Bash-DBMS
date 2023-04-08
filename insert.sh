@@ -12,6 +12,20 @@ DB=$1
 
 read -p "Enter your table name: " table_name
 
+if [[ ${table_name:0:1} == . ]]
+then
+    echo -e "\n${RED}you don't have permission to insert into this type of files${NC}\n"
+    exit
+fi
+
+error=`validate_name $table_name`
+if [ $? -eq 1 ]
+then
+    # Returns Error
+    echo -e "\n${RED}>>>${YELLOW}Table name $error${RED}<<<${NC}\n"
+    exit
+fi
+
 if [[ ! -f "$DB/$table_name" ]]
 then
     echo -e "\n${YELLOW}Table does NOT exist${NC}\n"
@@ -25,7 +39,7 @@ cols_formatted=${cols//:/ }
 types=`head -n 2 $DB/.$table_name | tail -n 1`
 types_formatted=(${types//:/ })
 
-primary_key=`tail -n 1 $DB/.$table_name`
+primary_key=`head -n 3 $DB/.$table_name | tail -n 1`
 
 index=0
 
@@ -37,7 +51,7 @@ do
         
         read -p "Enter value of $col($data_type): " input
         
-        if [[ $primary_key == $((index+1)) && `awk -F: -v input=$input -v primary_key=$primary_key '{ if($primary_key == input){print NR}}' $DB/$table_name` ]]
+        if [[ $primary_key == $((index+1)) && `awk -F: -v input="$input" -v primary_key=$primary_key '{ if($primary_key == input){print NR}}' $DB/$table_name` ]]
         then
             # Primary Key Match
             echo -e "\n${RED}>>>${YELLOW}$input already EXISTS in the table${RED}<<<${NC}\n"
@@ -52,7 +66,7 @@ do
             continue
         fi
         
-        data[$index]=$input
+        data[$index]="$input"
         let index++
         
         break
