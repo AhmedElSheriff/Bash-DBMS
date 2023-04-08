@@ -15,7 +15,7 @@ if [ $? -eq 1 ]
 then
     # Returns Error
     echo -e "\n${RED}>>>${YELLOW}Table name $error${RED}<<<${NC}\n"
-    break
+    exit
 fi
 
 DB=$1/$table_name
@@ -59,13 +59,19 @@ do
                 do
                     read -p "Enter number of columns you need to update: " columns
                     num_of_columns=`head -n 2 $SCHEMA | tail -n 1 | tr ":" " " | wc -w`
-                    if (($columns > $num_of_columns || $columns < 0))
+                    if [[ $columns =~ ^[0-9]+$ ]]
                     then
-                        echo -e "\n${RED}Number of columns must be between 1 and $num_of_columns${NC}\n"
-                        continue
+                        if [[ $columns > $num_of_columns || $columns < 0 ]]
+                        then
+                            echo -e "\n${RED}Number of columns must be between 1 and $num_of_columns${NC}\n"
+                            continue
+                        else
+                            break
+                        fi
                     else
-                        break
+                        echo -e "\n${RED}Number of columns must be integer${NC}\n"
                     fi
+                    
                 done
 
 
@@ -126,28 +132,39 @@ do
                         #     done
                         # fi
 
-                        case $type in
-                            int)
-                                if [[ ! $column_value =~ ^[+-]?[0-9]+$ ]]; then
-                                    echo -e "\n${RED}Value must be integer.${NC}\n"
-                                    continue
-                                else
-                                    break
-                                fi
-                            ;;
-                            float)
-                                if [[ ! $column_value =~ ^[+-]?[0-9]+[.][0-9]*$ ]]; then
-                                    echo -e "\n${RED}Value must be float.${NC}\n"
-                                    continue
-                                else
-                                    break
-                                fi
-                            ;;
-                            string)
-                                echo -e "\n${GREEN}Your value added as a string${NC}\n"
-                                break
-                            ;;
-                        esac
+                        error=`validate_table_data $type $column_value`
+                        if [ $? -eq 1 ]
+                        then
+                            # Returns Error
+                            echo -e "\n${RED}>>>${YELLOW}$error${RED}<<<${NC}\n"
+                            continue
+                        else
+                            break
+                        fi
+
+
+                        # case $type in
+                        #     int)
+                        #         if [[ ! $column_value =~ ^[+-]?[0-9]+$ ]]; then
+                        #             echo -e "\n${RED}Value must be integer.${NC}\n"
+                        #             continue
+                        #         else
+                        #             break
+                        #         fi
+                        #     ;;
+                        #     float)
+                        #         if [[ ! $column_value =~ ^[+-]?[0-9]+[.][0-9]*$ ]]; then
+                        #             echo -e "\n${RED}Value must be float.${NC}\n"
+                        #             continue
+                        #         else
+                        #             break
+                        #         fi
+                        #     ;;
+                        #     string)
+                        #         echo -e "\n${GREEN}Your value added as a string${NC}\n"
+                        #         break
+                        #     ;;
+                        # esac
                     done
                     
                     awk -v row=$row -v i=$column_num -v v=$column_value 'BEGIN { FS=OFS=":" } NR==row { $i = v } 1' \

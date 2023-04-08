@@ -27,7 +27,7 @@ function validate_name() {
         return 1
     fi
 
-    if [[ $* == *['ٌُ÷×…;،:,/!|<>{}][]"-'@#\$%^\&*()+.\`]*  ]]
+    if [[ $* == *['ٌُ÷×…;،:,/!|<>{}][]"-'?@#\$%^\&*()+.\`]*  ]]
     then
         echo must NOT include special characters
         return 1
@@ -48,7 +48,7 @@ function validate_db_username() {
         return 1
     fi
 
-    if [[ $* == *['ُ ٌ÷…،×:;,/!|<>{}][]"-'@#\$%^\&*()+.\`]*  ]]
+    if [[ $* == *['ُ ٌ÷…،×:;,/!|<>{}][]"-'?@#\$%^\&*()+.\`]*  ]]
     then
         echo DB username must NOT include spaces or special characters
         return 1
@@ -56,6 +56,11 @@ function validate_db_username() {
 }
 
 function validate_table_data() {
+    if [[ ! $2 ]]
+    then
+        echo Value must NOT be NULL
+        return 1
+    fi
     case $1 in
         int)
             if ! [[ $2 =~ ^[+-]?[0-9]+$ ]]
@@ -73,7 +78,7 @@ function validate_table_data() {
         ;;
 
         string)
-            if [[ $2 == *[:]*  ]]
+            if [[ $2 == *[:]* ]]
             then
                 echo Value must NOT include column seperator
                 return 1

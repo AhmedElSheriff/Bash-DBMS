@@ -27,31 +27,61 @@ then
     exit
 fi
 
+SCHEMA=$DB/.$table_name
+primary_key_column=`head -n 3 $SCHEMA | tail -n 1`
+
+echo $primary_key_column
+
 while [ true ]
 do
     select choice in "Select all table rows" "Select specific columns" "Select specific row" "Back"
     do
         case $choice in 
             "Select all table rows")
+                echo -e "\n"
                 cat $DB/$table_name
                 echo -e "\n"
                 break
             ;;
             "Select specific columns")
                 read -p "Enter the index of columns you need to select seperated by comma (,): " colms
-                # printf -v joined '%s,' "${arr[@]}"
-                # elements="${joined%,}"
-                cat $DB/$table_name | cut -d: -f$colms
-                echo -e "\n"
-                break
+
+                num_of_columns=`head -n 2 $SCHEMA | tail -n 1 | tr ":" " " | wc -w`
+                cols_formatted=${colms//,/ }
+                for val in $cols_formatted
+                do
+                    if [[ $val > $num_of_columns || $val < 0 ]]
+                    then
+                        echo -e "\n${RED}your columns values should be between 0 and $num_of_columns${NC}\n"
+                        break 2
+                    fi
+                done
+
+                if [[ ! $colms =~ ^[0-9]+[,0-9]*$ ]]
+                then
+                    echo -e "\n${RED}The value must be column numbers seperated by comma${NC}\n"
+                    break
+                else
+                    echo -e "\n"
+                    cat $DB/$table_name | cut -d: -f$colms
+                    echo -e "\n"
+                    break
+                fi
+                
             ;;
             "Select specific row")
                 read -p "Enter your primary key to the row you need to select: " key
-                if ! grep -q ^$key "$DB/$table_name" 
+
+                exist=`awk -v key=$key -v primary_key_column=$primary_key_column 'BEGIN { FS=":" } \
+                $primary_key_column == key { print 1 ;exit} ' $DB/$table_name`
+                
+                if [[ $exist != 1 ]] 
                     then
                         echo -e "\n${RED}This primary key is not exist${NC}\n"
                     else
-                        awk -F: -v key=$key -v z=$z '{if (($1==key)) {print $0}}' $DB/$table_name
+                        echo -e "\n"
+                        awk -F: -v key=$key '{if (($1==key)) {print $0}}' $DB/$table_name
+                        echo -e "\n"
                 fi
             ;;
             "Back")

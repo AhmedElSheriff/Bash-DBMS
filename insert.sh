@@ -12,12 +12,6 @@ DB=$1
 
 read -p "Enter your table name: " table_name
 
-if [[ ${table_name:0:1} == . ]]
-then
-    echo -e "\n${RED}you don't have permission to insert into this type of files${NC}\n"
-    exit
-fi
-
 error=`validate_name $table_name`
 if [ $? -eq 1 ]
 then
